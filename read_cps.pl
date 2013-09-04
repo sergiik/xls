@@ -8,6 +8,7 @@ use Getopt::Long;
 use English qw( -no_match_vars );
 use Readonly;
 use Record;
+use CPS;
 
 Readonly my $NUM => 1;
 Readonly my $HEADER_IDX => 0;
@@ -41,6 +42,6 @@ my @rows = rows( $book->[$sheet_num] );
 
 my $i = $HEADER_IDX + 1;
 while ( $i <= 4 ) {
-    my $r = Record->new( header_names => $rows[$HEADER_IDX], values => $rows[$i] );
+    my $r = CPS->new( header_names => $rows[$HEADER_IDX], values => $rows[$i] );
     $i++;
 }
