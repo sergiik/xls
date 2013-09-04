@@ -3,12 +3,15 @@ use Modern::Perl 2011;
 use autodie;
 
 use Data::Dumper;
-use Spreadsheet::Read;
+use Spreadsheet::Read qw( rows );
 use Getopt::Long;
 use English qw( -no_match_vars );
+use Readonly;
 
 my $xlsfile;
 my $help;
+my $sheet_num = $num;
+Readonly $num => 1;
 
 GetOptions(
     'help|?'    => \$help,
@@ -30,3 +33,10 @@ my $book = ReadData($xlsfile);
 
 while ( my ( $k, $v ) = each $book->[0] )        { say "$k $v" }
 while ( my ( $k, $v ) = each $book->[0]{sheet} ) { say "$k $v" }
+
+my @rows = rows( $book->[$sheet_mum] );
+
+while ( my $i <= 5 ) {
+    say @{ $rows[$i] };
+    $i++;
+}
