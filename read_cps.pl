@@ -3,15 +3,18 @@ use Modern::Perl 2011;
 use autodie;
 
 use Data::Dumper;
-use Spreadsheet::Read qw( rows );
+use Spreadsheet::Read qw( rows ReadData );
+use Spreadsheet::ParseExcel::Utility qw(ExcelFmt ExcelLocaltime LocaltimeExcel);
 use Getopt::Long;
 use English qw( -no_match_vars );
 use Readonly;
 
+Readonly my $num => 1;
+Readonly my $header_idx => 0;
+
 my $xlsfile;
 my $help;
 my $sheet_num = $num;
-Readonly $num => 1;
 
 GetOptions(
     'help|?'    => \$help,
@@ -34,9 +37,23 @@ my $book = ReadData($xlsfile);
 while ( my ( $k, $v ) = each $book->[0] )        { say "$k $v" }
 while ( my ( $k, $v ) = each $book->[0]{sheet} ) { say "$k $v" }
 
-my @rows = rows( $book->[$sheet_mum] );
+my @rows = rows( $book->[$sheet_num] );
 
-while ( my $i <= 5 ) {
-    say @{ $rows[$i] };
+my $i = 0;
+while ( $i <= 5 ) {
+    say join ";", @{ $rows[$i] };
     $i++;
 }
+
+my $r = Record->new( header_names => $rows[$header_idx]);
+
+package Record;
+use Mouse;
+
+has 'header_names' => (is => 'ro', isa => 'ArrayRef', trigger => sub { 
+		my $self = shift;
+		say join ";", @{$self->header_names} 
+	}
+);
+
+__PACKAGE__->meta->make_immutable();
