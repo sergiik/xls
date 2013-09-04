@@ -4,10 +4,10 @@ use autodie;
 
 use Data::Dumper;
 use Spreadsheet::Read qw( rows ReadData );
-use Spreadsheet::ParseExcel::Utility qw(ExcelFmt ExcelLocaltime LocaltimeExcel);
 use Getopt::Long;
 use English qw( -no_match_vars );
 use Readonly;
+use Record;
 
 Readonly my $NUM => 1;
 Readonly my $HEADER_IDX => 0;
@@ -39,25 +39,8 @@ while ( my ( $k, $v ) = each $book->[0]{sheet} ) { say "$k $v" }
 
 my @rows = rows( $book->[$sheet_num] );
 
-my $i = 0;
-while ( $i <= 5 ) {
-    say join q{;}, @{ $rows[$i] };
+my $i = $HEADER_IDX + 1;
+while ( $i <= 4 ) {
+    my $r = Record->new( header_names => $rows[$HEADER_IDX], values => $rows[$i] );
     $i++;
 }
-
-my $r = Record->new( header_names => $rows[$HEADER_IDX] );
-
-package Record;
-use Mouse;
-
-has 'header_names' => (
-    is      => 'ro',
-    isa     => 'ArrayRef',
-    trigger => sub {
-        my $self = shift;
-        say join q{;}, @{ $self->header_names };
-    },
-);
-
-__PACKAGE__->meta->make_immutable();
-
